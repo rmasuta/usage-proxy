@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Usage Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .step-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 20px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .button-grid {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        
+        button.option-btn {
+            padding: 16px;
+            text-align: left;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0f172a;
+            transition: all 0.2s;
+        }
+        
+        button.option-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        button.option-btn.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        button.primary {
+            flex: 1;
+            padding: 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button.primary:hover {
+            background: #2563eb;
+        }
+        
+        button.primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+        
+        button.secondary {
+            flex: 1;
+            padding: 12px;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button.secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        button.success {
+            flex: 1;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button.success:hover {
+            background: #059669;
+        }
+        
+        .result-box {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .result-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .result-number {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .result-unit {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-top: 4px;
+        }
+        
+        .breakdown {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .breakdown h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #334155;
+            margin-bottom: 8px;
+            line-height: 1.8;
+        }
+        
+        .breakdown-total {
+            border-top: 1px solid #cbd5e1;
+            padding-top: 8px;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        
+        .breakdown-total strong {
+            color: #3b82f6;
+        }
+        
+        .info-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #166534;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Energy Usage Calculator</h1>
+        <p class="subtitle">Estimate your annual kWh in minutes—no experience needed</p>
+
+        <!-- STEP 1: Business Type -->
+        <div id="step1" class="step">
+            <div class="step-label">Step 1 of 4</div>
+            <h2>What type of business?</h2>
+            <div class="button-grid">
+                <button class="option-btn" onclick="selectBusiness('office')">Office</button>
+                <button class="option-btn" onclick="selectBusiness('retail')">Retail Store</button>
+                <button class="option-btn" onclick="selectBusiness('restaurant')">Restaurant</button>
+                <button class="option-btn" onclick="selectBusiness('warehouse')">Warehouse</button>
+                <button class="option-btn" onclick="selectBusiness('manufacturing')">Light Manufacturing</button>
+                <button class="option-btn" onclick="selectBusiness('gym')">Gym/Fitness</button>
+            </div>
+            <div class="button-row">
+                <button class="primary" onclick="goToStep(2)" id="step1-next">Next →</button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Facility Size -->
+        <div id="step2" class="step hidden">
+            <div class="step-label">Step 2 of 4</div>
+            <h2>Facility size & staff</h2>
+            <div class="form-group">
+                <label for="sqft">Square footage</label>
+                <input type="number" id="sqft" placeholder="e.g., 5000">
+            </div>
+            <div class="form-group">
+                <label for="employees">Number of employees</label>
+                <input type="number" id="employees" placeholder="e.g., 10">
+            </div>
+            <div class="button-row">
+                <button class="secondary" onclick="goToStep(1)">← Back</button>
+                <button class="primary" onclick="goToStep(3)">Next →</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Operating Hours -->
+        <div id="step3" class="step hidden">
+            <div class="step-label">Step 3 of 4</div>
+            <h2>Operating schedule</h2>
+            <div class="form-group">
+                <label for="hours">Hours per day</label>
+                <input type="number" id="hours" value="8" placeholder="e.g., 8">
+            </div>
+            <div class="form-group">
+                <label for="days">Days per week</label>
+                <select id="days">
+                    <option value="5">5 (Mon-Fri)</option>
+                    <option value="6">6 (Mon-Sat)</option>
+                    <option value="7">7 (Every day)</option>
+                </select>
+            </div>
+            <div class="button-row">
+                <button class="secondary" onclick="goToStep(2)">← Back</button>
+                <button class="primary" onclick="goToStep(4)">Next →</button>
+            </div>
+        </div>
+
+        <!-- STEP 4: Review & Calculate -->
+        <div id="step4" class="step hidden">
+            <div class="step-label">Step 4 of 4 • Final</div>
+            <h2>Ready?</h2>
+            <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">
+                We've collected everything we need. Click below to calculate your estimated annual energy usage.
+            </p>
+            <div class="button-row">
+                <button class="secondary" onclick="goToStep(3)">← Back</button>
+                <button class="success" onclick="calculateUsage()">Calculate</button>
+            </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="results" class="hidden">
+            <h2>Your Estimated Annual Usage</h2>
+            
+            <div class="result-box">
+                <div class="result-label">Total Annual Usage</div>
+                <div class="result-number" id="result-total">0</div>
+                <div class="result-unit">kWh per year</div>
+            </div>
+
+            <div class="breakdown">
+                <h3>Breakdown</h3>
+                <div class="breakdown-item">
+                    <span>Building (HVAC, lighting, systems):</span>
+                    <strong id="result-base">0</strong>
+                </div>
+                <div class="breakdown-item" id="emp-row">
+                    <span>Employee workstations & devices:</span>
+                    <strong id="result-emp">0</strong>
+                </div>
+                <div class="breakdown-item breakdown-total">
+                    <span>Total:</span>
+                    <strong id="result-grand">0</strong>
+                </div>
+            </div>
+
+            <div class="info-box" id="info-box"></div>
+
+            <div class="button-row">
+                <button class="secondary" onclick="resetCalculator()" style="flex: 1;">Calculate Another</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedBusiness = '';
+
+        const benchmarks = {
+            office: { basePerSqft: 12, name: 'Office' },
+            retail: { basePerSqft: 20, name: 'Retail Store' },
+            restaurant: { basePerSqft: 35, name: 'Restaurant' },
+            warehouse: { basePerSqft: 8, name: 'Warehouse' },
+            manufacturing: { basePerSqft: 50, name: 'Light Manufacturing' },
+            gym: { basePerSqft: 25, name: 'Gym/Fitness' },
+        };
+
+        function selectBusiness(type) {
+            selectedBusiness = type;
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        function goToStep(stepNum) {
+            if (stepNum === 2 && !selectedBusiness) {
+                alert('Please select a business type');
+                return;
+            }
+            if (stepNum === 3 && !document.getElementById('sqft').value) {
+                alert('Please enter square footage');
+                return;
+            }
+
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.add('hidden');
+            });
+            document.getElementById('step' + stepNum).classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function calculateUsage() {
+            const sqftNum = parseFloat(document.getElementById('sqft').value);
+            const empNum = parseFloat(document.getElementById('employees').value) || 0;
+            const hoursNum = parseFloat(document.getElementById('hours').value) || 8;
+            const daysNum = parseFloat(document.getElementById('days').value) * 52;
+
+            if (!selectedBusiness || !sqftNum) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const benchmark = benchmarks[selectedBusiness];
+            const operatingHours = hoursNum * daysNum;
+            
+            // Base usage from benchmark
+            const baseUsage = (sqftNum / 1000) * benchmark.basePerSqft * 1000;
+            const standardHours = 2000;
+            const hourAdjustment = operatingHours / standardHours;
+            const adjustedUsage = baseUsage * hourAdjustment;
+
+            // Add employee usage (2000 kWh per employee per year)
+            const employeeUsage = empNum * 2000;
+            const totalUsage = adjustedUsage + employeeUsage;
+
+            // Display results
+            document.getElementById('result-total').textContent = Math.round(totalUsage).toLocaleString();
+            document.getElementById('result-base').textContent = Math.round(adjustedUsage).toLocaleString() + ' kWh';
+            document.getElementById('result-emp').textContent = Math.round(employeeUsage).toLocaleString() + ' kWh';
+            document.getElementById('result-grand').textContent = Math.round(totalUsage).toLocaleString() + ' kWh';
+
+            // Show/hide employee row
+            if (empNum === 0) {
+                document.getElementById('emp-row').style.display = 'none';
+            } else {
+                document.getElementById('emp-row').style.display = 'flex';
+            }
+
+            // Info box
+            const infoBox = document.getElementById('info-box');
+            infoBox.innerHTML = `✓ Based on: <strong>${benchmark.name}</strong> | ${Math.round(operatingHours).toLocaleString()} operating hours/year`;
+
+            // Hide all steps, show results
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.add('hidden');
+            });
+            document.getElementById('results').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function resetCalculator() {
+            selectedBusiness = '';
+            document.getElementById('sqft').value = '';
+            document.getElementById('employees').value = '';
+            document.getElementById('hours').value = '8';
+            document.getElementById('days').value = '5';
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.add('hidden');
+            });
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
